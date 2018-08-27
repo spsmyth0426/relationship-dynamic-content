@@ -26,7 +26,7 @@ if ('development' == app.get('env')) {
 app.get('/', function(request, response, next) {
   response.render('index.ejs', {
   });
-});
+}); 
 
 app.get('/getAsset', function(req, res, next) {
   /**********************/
