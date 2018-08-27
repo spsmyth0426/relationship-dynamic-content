@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CB Custom Attributes</title>
+
+    <link rel="stylesheet" type="text/css" href="/assets/styles/salesforce-lightning-design-system.css" />
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script data-main="js/main.js" src="js/main.js"></script>
+    <script data-main="js/blocksdk.js" src="js/blocksdk.js"></script>
+    <script type="text/javascript">
+        
+        var sdk = new SDK();          
+       
+    </script>
+
+    <!--Styles-->
+    <style type="text/css">
+        body {
+            padding: 20px;
+            margin: 0;
+        }
+        .step {
+            display: none;
+        }
+        #step1 {
+            display: block;
+        }
+    </style>
+
+</head>
+<body>
+<form id="sports">    
+<div id="step1" class="step">
+        <div class="slds-form slds-form_compound">
+                <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="league">Choose</label>
+                        <div class="slds-form-element__control">
+                          <div class="slds-select_container">
+                            <select class="slds-select" id="league">
+                              <option value="">Please select</option>
+                              <option value="nba/2018-playoff/player_gamelogs.json?team=bos">NBA - 2018 - Boston Celtics</option>
+                              <option value="nba/2018-playoff/player_gamelogs.json?team=tor">NBA - 2018 - Toronto Raptors</option>
+                              <option value="nba/2018-playoff/player_gamelogs.json?team=hou">NBA - 2018 - Houston Rockets</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+            <br>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="input-id-01">Sample Content:</label>
+                    <p id="sampleContent"></p>
+                    </br>
+                </div>
+            <br>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="input-id-01">Response:</label>
+                    <p id="restResoonse"></p>
+                    </br>
+                </div>  
+        </div>
+</div>
+</form>
+<script type="text/javascript">
+
+/*$(document).ready(function () {
+    var wsUrl = "https://webservice.s7.exacttarget.com/Service.asmx";
+
+    var soapRequest =
+    '<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header><wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-24440876" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:Username>shane.smyth.dev</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">cM375!352</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI"><RetrieveRequest><ObjectType>DataExtensionObject[MC_CB_Custom_Attributes]</ObjectType><Properties>Id</Properties><Properties>Name1</Properties><Properties>Value1</Properties><Properties>Name2</Properties><Properties>Value2</Properties><Properties>EmailId</Properties><Filter xsi:type="SimpleFilterPart"><Property>EmailId</Property><SimpleOperator>equals</SimpleOperator><Value>1</Value></Filter></RetrieveRequest></RetrieveRequestMsg></soapenv:Body></soapenv:Envelope>';
+
+    $.ajax({
+        type: "POST",
+        url: wsUrl,
+        contentType: "text/xml",
+        dataType: "xml",
+        data: soapRequest,
+        success: processSuccess,
+        error: processError
+    });
+
+    function processSuccess(data, status, req) {
+        //if (status == "success")
+            $("#soapResponse").text($(req));
+    }
+
+    function processError(data, status, req) {
+        alert(req.responseText + " " + status);
+    } 
+
+    // on page load - retrieve DE values
+    // iterate through values and update fields
+
+// on keyup
+    // post information back to DE
+
+});*/
+
+
+sdk.getData(function (data) {
+    var numberOfEdits = data.numberOfEdits || 0;
+    console.log(JSON.stringify(numberOfEdits, null, 2));
+
+    if(numberOfEdits == 0){
+        sdk.setData({
+            numberOfEdits: numberOfEdits + 1,
+            dataArray: {"league": "nba", "season": "2016-2017-regular", "player":"stephen-curry"}
+        });
+    }else{
+        console.log('DataArray exists, populate fields.');
+    }
+    console.log(JSON.stringify(data.dataArray, null, 2));
+});
+
+
+function saveContent(data) {
+
+    sdk.getData(function (data) {
+        //$( "#currentData" ).html(JSON.stringify(data, null, 2));
+
+        console.log("Inside SaveText - Data: "+JSON.stringify(data, null, 2));
+
+        function updateObject(keyVal, valVal){
+            var numberOfEdits = data.numberOfEdits || 0;
+            if(!data.dataArray){
+                //var dataArray = {"deExternalKey": "Function","keys": {"Id": "1"},"values": {"name1": valVal,"value1": "","name2": "", "value2": ""}}
+                console.log("Causing trouble!");
+            }else{
+                data.dataArray.keyVal = valVal;
+                console.log("Adding new values: "+JSON.stringify(data, null, 2));
+            }
+
+            sdk.setData({
+                numberOfEdits: numberOfEdits + 1,
+                dataArray: data.dataArray
+            });
+            console.log("Inside updateObject: "+JSON.stringify(data, null, 2));
+        }
+        updateObject(keyVal, valVal);
+        console.log("New Pair: "+keyVal+" - "+valVal);
+        //console.log("DataArray: "+JSON.stringify(dataArray, null, 2));
+
+        
+        console.log("After saveText setData: "+JSON.stringify(data.dataArray, null, 2));
+
+        $( "#currentData" ).html(JSON.stringify(data, null, 2));
+    });
+
+    sdk.getContent(function (content) {
+        //$( "#currentData" ).html(JSON.stringify(data, null, 2));
+
+        console.log("Inside SaveContent: "+JSON.stringify(content, null, 2));
+        console.log("Inside SaveContent - response data: "+JSON.stringify(data, null, 2));
+
+        content += data;
+        sdk.setContent(content, function (setContent) {
+            // block content is now its original content + '.'
+            console.log("setContent: "+JSON.stringify(setContent, null, 2));
+        });
+        
+    });
+
+}
+
+// keyup call for key/value pair 1
+$( "#league" ).focusout(function() {
+    if( $("#league").val() != null ) {
+        //var keyVal = {};
+        //keyVal["name1"] = $( "#name1" ).val();
+        //saveData("name1", $( "#name1" ).val());
+        
+        //var wsUrl = "https://api.mysportsfeeds.com/v1.2/pull/"+$('#league').val();
+        var wsUrl = "https://worldcup.sfg.io/teams/results";
+
+        console.log($("#sports").serialize());
+
+        $.ajax({
+            type: "GET",
+            url: wsUrl,
+            //data: $("#sports").serialize(),
+            success: processSuccess,
+            error: processError
+        });
+
+        /*
+        $.ajax({
+            type: "GET",
+            headers: {
+                'Authorization': 'Basic YzI3OTE0NDEtYzdjZS00OTJlLWI1YjQtZDQ3Y2U4OmtmNDV3eEI2'
+            },
+            url: wsUrl,
+            contentType: "text/json",
+            dataType: "json",
+            //data: $("#sports").serialize(),
+            success: processSuccess,
+            error: processError
+        });
+        */
+
+        function processSuccess(data, status, req) {
+            //if (status == "success")
+            $("#restResoonse").text(JSON.stringify(data, null, 2));
+            console.log(data);
+            
+            //var jsonObj = JSON.parse(data);
+            $("#sampleContent").html("<span>");
+                    /*$.each(data, function(index, element) {
+                        $("#sampleContent").html("<p>"+element+"</p>");
+                        //alert(element.timeStamp); 
+                    });*/
+                    data = $.parseJSON(data);
+                    $.each(data, function(i, item) {
+                        alert(item);
+                    });
+            $("#sampleContent").html("</span>");
+
+            //saveContent(data);
+        }
+
+        function processError(data, status, req) {
+            alert(req.responseText + " " + status);
+            console.log(JSON.stringify(data, null, 2));
+        } 
+    }else{
+        console.log('League or Player is empty');
+    }
+});
+
+</script>
+</body>
+</html>

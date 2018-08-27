@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CB Custom Attributes</title>
+
+    <link rel="stylesheet" type="text/css" href="/assets/styles/salesforce-lightning-design-system.css" />
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script data-main="js/main.js" src="js/main.js"></script>
+    <script data-main="js/blocksdk.js" src="js/blocksdk.js"></script>
+    <script type="text/javascript">
+        
+        console.log( "ready!" );
+        var sdk = new SDK();
+        console.log("SDK: "+ sdk);            
+       
+    </script>
+
+    <!--Styles-->
+    <style type="text/css">
+        body {
+            padding: 20px;
+            margin: 0;
+        }
+        .step {
+            display: none;
+        }
+        #step1 {
+            display: block;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="step1" class="step">
+        <div class="slds-form slds-form_compound">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="input-id-01">Current Data:</label>
+                    <p id="currentData"></p>
+                    </br>
+                </div>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="input-id-01">Response:</label>
+                    <p id="soapResponse"></p>
+                    </br>
+                </div>
+        </div>
+        <div class="slds-form slds-form_compound">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="input-id-01">Data Extension External Key</label>
+                <div class="slds-form-element__control">
+                <input type="text" id="deExternalKey" name="deExternalKey" class="slds-input" placeholder="Data Extension External Key" />
+                </div>
+            </div>
+            <br>
+            <fieldset class="slds-form-element">
+                <legend class="slds-form-element__label slds-form-element__legend slds-text-title_caps">Values</legend>
+                <div class="slds-form-element__group">
+                    <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="colName-01">Column Name</label>
+                        <input type="text" id="name1" class="slds-input" />
+                    </div>
+                    <div class="slds-form-element slds-size_1-of-2">
+                        <label class="slds-form-element__label" for="colValue-02">Column Value</label>
+                        <input type="text" id="value1" class="slds-input" />
+                    </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="slds-form-element">
+                    <div class="slds-form-element__group">
+                        <div class="slds-form-element__row">
+                        <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label" for="colName-01">Column Name</label>
+                            <input type="text" id="name2" class="slds-input" />
+                        </div>
+                        <div class="slds-form-element slds-size_1-of-2">
+                            <label class="slds-form-element__label" for="colValue-02">Column Value</label>
+                            <input type="text" id="value2" class="slds-input" />
+                        </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+</div>
+<script type="text/javascript">
+
+$(document).ready(function () {
+    var wsUrl = "https://webservice.s7.exacttarget.com/Service.asmx";
+
+    var soapRequest =
+    '<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Header><wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"><wsse:UsernameToken wsu:Id="UsernameToken-24440876" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"><wsse:Username>shane.smyth.dev</wsse:Username><wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">cM375!352</wsse:Password></wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body><RetrieveRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI"><RetrieveRequest><ObjectType>DataExtensionObject[MC_CB_Custom_Attributes]</ObjectType><Properties>Id</Properties><Properties>Name1</Properties><Properties>Value1</Properties><Properties>Name2</Properties><Properties>Value2</Properties><Properties>EmailId</Properties><Filter xsi:type="SimpleFilterPart"><Property>EmailId</Property><SimpleOperator>equals</SimpleOperator><Value>1</Value></Filter></RetrieveRequest></RetrieveRequestMsg></soapenv:Body></soapenv:Envelope>';
+
+    $.ajax({
+        type: "POST",
+        url: wsUrl,
+        contentType: "text/xml",
+        dataType: "xml",
+        data: soapRequest,
+        success: processSuccess,
+        error: processError
+    });
+
+    function processSuccess(data, status, req) {
+        //if (status == "success")
+            $("#soapResponse").text($(req));
+    }
+
+    function processError(data, status, req) {
+        alert(req.responseText + " " + status);
+    } 
+
+    // on page load - retrieve DE values
+    // iterate through values and update fields
+
+// on keyup
+    // post information back to DE
+
+});
+
+
+
+var dataArray = {};
+
+sdk.getData(function (data) {
+    console.log("FIRST DATA:  "+JSON.stringify(data, null, 2));
+    if(typeof data.dataArray === 'undefined'){
+        var dataArray = {"deExternalKey": "MC_CB_Custom_Attributes","keys": {"Id": "1"},"values": {"name1": "","value1": "","name2": "", "value2": ""}};
+        console.log("Initial Load: Set data array");
+        console.log("Initial Load data: : "+JSON.stringify(dataArray, null, 2));
+    }else{
+        console.log("Initial Load: Already Set: "+data.dataArray);
+    }
+    
+    console.log("Current Data 1: "+JSON.stringify(data, null, 2));
+
+    $( "#currentData" ).html(JSON.stringify(data.dataArray, null, 2));
+
+    var numberOfEdits = data.numberOfEdits || 0;
+
+    sdk.setData({
+        numberOfEdits: numberOfEdits + 1,
+        dataArray: dataArray
+    });
+    console.log("Current Data 2: "+JSON.stringify(data, null, 2));
+
+    // set value from get
+    //setBlockValues(data);
+});
+
+sdk.getData(function (data) {
+    console.log("2nd iteration: "+JSON.stringify(data, null, 2));
+});
+
+function setBlockValues(data){
+    console.log("setBlockValues: "+JSON.stringify(data, null, 2));
+    if(typeof data.dataArray === 'undefined'){
+        //$( "#deExternalKey" ).val(data);
+
+        // data set 1
+        $( "#name1" ).val(data.dataArray.values.name1);
+        $( "#value1" ).val(data.dataArray.values.value1);
+
+        // data set 2
+        $( "#name2" ).val(data.dataArray.values.name2);
+        $( "#value2" ).val(data.dataArray.values.value2);
+
+    }
+}
+
+sdk.getContent(function (content) {
+    // set value from get
+    $( "#deExternalKey" ).val(content);
+    content += '.';
+    sdk.setContent(content, function (setContent) {
+        console.log("Shane Content" + content);
+    });
+});
+
+function saveText(keyVal, valVal) {
+    var html = $( "#deExternalKey" ).val();
+    sdk.setContent(html);
+    sdk.setSuperContent('This is super content: ' + html);
+
+    sdk.getData(function (data) {
+        //$( "#currentData" ).html(JSON.stringify(data, null, 2));
+
+        console.log("Inside SaveText - Data: "+JSON.stringify(data, null, 2));
+        var numberOfEdits = data.numberOfEdits || 0;
+
+        function updateObject(key, value){
+            data.dataArray.values[key] = value;
+            console.log("Inside updateObject: "+JSON.stringify(data.dataArray, null, 2));
+        }
+        updateObject(keyVal, valVal);
+        console.log("New Pair: "+keyVal+" - "+valVal);
+        //console.log("DataArray: "+JSON.stringify(dataArray, null, 2));
+
+        var value = data.value || 0;
+        sdk.setData({
+            numberOfEdits: numberOfEdits + 1,
+            dataArray: data.dataArray
+        });
+        console.log("After saveText setData: "+JSON.stringify(data.dataArray.values, null, 2));
+        /*$.ajax({
+            url: "https://shane-cb.herokuapp.com/save",
+            type: 'POST',
+            cache: false,
+            data: data.dataArray,
+            beforeSend: function() {},
+            timeout: 10000,
+            error: function() {},
+            success: function(data) {
+                console.log(data);
+            }
+        });*/
+
+        $( "#currentData" ).html(JSON.stringify(data, null, 2));
+    });
+
+    sdk.getCentralData(function (central) {
+        var totalNumberOfEdits = central.totalNumberOfEdits || 0;
+        sdk.setCentralData({
+            totalNumberOfEdits: totalNumberOfEdits + 1
+        });
+    });
+}
+    
+// keyup call for key/value pair 1
+$( "#name1" ).keyup(function() {
+    var keyVal = {};
+    keyVal["name1"] = $( "#name1" ).val();
+    saveText("name1", $( "#name1" ).val());
+});
+$( "#value1" ).keyup(function() {
+    var keyVal = {};
+    keyVal["value1"] = $( "#value1" ).val();
+    saveText("value1", $( "#value1" ).val());
+});
+
+// keyup call for key/value pair 2
+$( "#name2" ).keyup(function() {
+    var keyVal = {};
+    keyVal["name2"] = $( "#name2" ).val();
+    saveText("name2", $( "#name2" ).val());
+});
+$( "#value2" ).keyup(function() {
+    var keyVal = {};
+    keyVal["value2"] = $( "#value2" ).val();
+    saveText("value2", $( "#value2" ).val());
+});
+</script>
+</body>
+</html>

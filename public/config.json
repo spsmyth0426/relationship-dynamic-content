@@ -1,0 +1,61 @@
+{
+    "workflowApiVersion": "1.1",
+    "metaData": {
+        "icon": "images/icon.png",
+        "iconSmall": "images/iconSmall.png",
+        "category": "customer"
+    },
+    "type": "Rest",
+    "lang": {
+        "en-US": {
+            "name": "Insert Rows",
+           "description": "An activity to insert net new rows into Data Extensions.",
+            "step1Label": "Configure Activity"
+        }
+    },
+    "arguments": {
+        "execute": {
+           "inArguments":[
+				{
+                    "emailAddress": "{{InteractionDefaults.Email}}"
+                }									
+			],
+          "outArguments": [],
+          "url": "https://shane-jb.herokuapp.com/execute",
+          "useJwt": true,
+          "timeout": 10000
+        }
+    },
+    "configurationArguments": {
+      "save": {
+        "url": "https://shane-jb.herokuapp.com/save"
+       },
+       "publish": {
+        "url": "https://shane-jb.herokuapp.com/publish"
+       },
+      "stop": {
+        "url": "https://shane-jb.herokuapp.com/stop"
+      },
+      "validate": {
+        "url": "https://shane-jb.herokuapp.com/validate"
+      }
+    },
+    "wizardSteps": [
+        { "label": "Configure Row Insert", "key": "step1" }
+    ],
+    "userInterfaces": {
+        "configModal": {
+            "height": 400,
+            "width": 1000,
+          "fullscreen": false
+        }
+    },
+    "schema": {
+        "arguments": {
+            "execute": {
+                "inArguments": [],
+                "outArguments": []
+            }
+        }
+    }
+}
