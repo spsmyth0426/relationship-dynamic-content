@@ -209,9 +209,9 @@ function saveContent(name, value) {
             });
             var superContent = "<p><b>Dynamic Content Type: Summary</b></p><p>Preview dynamic content by clicking next.</p>";
             console.log("SuperContent HTML: "+JSON.stringify(data.dataArray.defaultContentHTML, null, 2));
-            sdk.setSuperContent(data.dataArray.defaultContentHTML, function (setSuperContent){
+            /*sdk.setSuperContent(data.dataArray.defaultContentHTML, function (setSuperContent){
                 console.log("SuperContent: "+JSON.stringify(setSuperContent, null, 2));
-            });
+            });*/
         }else{
             console.log('Validate: '+validate);
         }
