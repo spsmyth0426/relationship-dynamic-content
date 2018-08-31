@@ -202,7 +202,7 @@ function saveContent(name, value) {
                 console.log("Ampscript: "+ampSnippet);
 
                 content = ampSnippet;
-                sdk.setContent(content, function (setContent) {
+                sdk.setContent(ampSnippet, function (setContent) {
                     console.log("setContent: "+JSON.stringify(setContent, null, 2));
                 });
                 
