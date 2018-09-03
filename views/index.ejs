@@ -164,13 +164,13 @@ function saveContent(name, value) {
             }else{
                 data.dataArray[name] = value;
                 console.log("Adding new values: "+JSON.stringify(data, null, 2));
-            }
+            } 
 
             console.log("Type Value: "+JSON.stringify(data.dataArray.type, null, 2));
 
-            var summaryDEName = 'Survey_Results_Summary__c_Salesforce';
-            var avalSubscriptionDEName = 'Available_Subscription__c_Salesforce';
-            var interestDEName = 'Interest__c_Salesforce';
+            var summaryDEName = 'ent.Survey_Results_Summary__c_Salesforce';
+            var avalSubscriptionDEName = 'ent.Available_Subscription__c_Salesforce';
+            var interestDEName = 'ent.Interest__c_Salesforce';
 
             if(data.dataArray.type == 'Summary'){
                 ampSnippet = "%%[Set @PreferenceQuestionId = '"+data.dataArray.relevantId+"' Set @InterestId = '' Set @Id = AttributeValue('Id') Set @summary_rows = LookupOrderedRows('"+summaryDEName+"', 1, 'Id Desc', 'WhoId__c', @Id, 'Preference_Question__c', @PreferenceQuestionId) IF RowCount(@summary_rows) == 0 THEN Set @summary_message = 'There is no matching record.' ELSE IF RowCount(@summary_rows) != 0 THEN Set @summary_message = 'Record was found' Set @summary_row = row(@summary_rows,1) Set @QuestionId = FIELD(@summary_row,'Preference_Question__c') Set @AnswerValue = FIELD(@summary_row,'Answer__c') ELSE Set @summary_message = 'There is no matching record.' ENDIF ENDIF]%% %%[IF @AnswerValue == '"+data.dataArray.condition1+"' THEN Outputline(ContentBlockbyId('"+data.dataArray.content1+"')) ELSE Outputline(ContentBlockbyId('"+data.dataArray.defaultContent1+"')) ENDIF]%%";
