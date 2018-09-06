@@ -9,6 +9,7 @@
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script data-main="js/main.js" src="js/main.js"></script>
     <script data-main="js/blocksdk.js" src="js/blocksdk.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <script type="text/javascript">
         
         var sdk = new SDK();          
@@ -45,7 +46,8 @@
 <body>
 <div class="loaderContainer hide" id="dynamicContainer" style="width:100%;height:100%;z-index:9;position: absolute;background-color:gray;opacity: .5;">
     <div id="dynamicLoader" class="loader" style="position:absolute;top:50%;left:45%;z-index:10;"></div>   
-</div>     
+</div> 
+<div id="settings" class="settings" style="position:absolute;top:10px;right:10px;z-index:10;"><i class="fas fa-cogs"></i></div>    
 <form id="dynamicForm" style="padding: 20px;margin: 0;">    
 <div id="step1" class="step">
         <p>Description: This block is used to build dynamic content to related data extensions that the normal dynamic content block does not allow.</p>
