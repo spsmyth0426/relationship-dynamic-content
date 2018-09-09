@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Content Builder - Dynamic</title>
+
+    <link rel="stylesheet" type="text/css" href="/assets/styles/salesforce-lightning-design-system.css" />
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script data-main="js/main.js" src="js/main.js"></script>
+    <script data-main="js/blocksdk.js" src="js/blocksdk.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script type="text/javascript">
+        
+        var sdk = new SDK();          
+       
+    </script>
+
+    <!--Styles-->
+    <style type="text/css">
+        .step {
+            display: none;
+        }
+        #step1 {
+            display: block;
+        }
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hide{
+            display:none;
+        }
+    </style>
+
+</head>
+<body>
+<div class="loaderContainer hide" id="dynamicContainer" style="width:100%;height:100%;z-index:9;position: absolute;background-color:gray;opacity: .5;">
+    <div id="dynamicLoader" class="loader" style="position:absolute;top:50%;left:45%;z-index:10;"></div>   
+</div> 
+<div id="settings" class="settings" style="position:absolute;top:10px;right:10px;z-index:10;"><a href="" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-cogs"></i></a></div>    
+<h1>Configure</h1>
+<div class="slds-form-element">
+    <div class="slds-form-element__control"> 
+        <div class="">
+            <p style="padding-top:10px;">ClientId</p>    
+            <div class="slds-form-element__control">
+                <input type="text" id="clientId" name="clientId" class="slds-input" placeholder="ClientId" required/>  
+            </div>
+            <p style="padding-top:10px;">ClientSecret</p>    
+            <div class="slds-form-element__control">
+                <input type="text" id="clientSecret" name="clientSecret" class="slds-input" placeholder="ClientSecret" required/>  
+            </div>
+            <p style="padding-top:10px;">Summary - Data Extension External Key</p>    
+            <div class="slds-form-element__control">
+                <input type="text" id="summaryEK" name="summaryEK" class="slds-input" placeholder="External Key" required/>  
+            </div>
+            <p style="padding-top:10px;">Interest - Data Extension External Key</p>    
+            <div class="slds-form-element__control">
+                <input type="text" id="interestEK" name="interestEK" class="slds-input" placeholder="External Key" required/>  
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript"> 
+
+function getAsset(assetId){
+    $.ajax({ 
+        type: "GET",
+        url: "https://relationship-dynamic-content.herokuapp.com/getAsset?id="+assetId,
+        success: function(data){        
+            //alert(JSON.stringify(data, null, 2));
+            //return data;
+            console.log(data.message);
+            saveContent('defaultContentHTML', data.message);
+        }
+    });
+}
+
+sdk.getData(function (data) {
+    var numberOfEdits = data.numberOfEdits || 0;
+    console.log(JSON.stringify(numberOfEdits, null, 2));
+
+    if(numberOfEdits == 0){
+        sdk.setData({
+            numberOfEdits: numberOfEdits + 1,
+            dataArray: {"type": "", "relevantId": "", "ampSnippet": "", "condition1": "", "content1": "", "defaultContent1": "", "condition2": "", "content2": "", "condition3": "", "content3": "", "defaultContentHTML": ""},
+            ampSnippet: ""
+        });
+    }else{
+        $('#dataObject').html(JSON.stringify(data.dataArray, null, 2));
+        $("#type").val(data.dataArray.type);
+        $("#relevantId").val(data.dataArray.relevantId);
+        $("#condition1").val(data.dataArray.condition1);
+        $("#content1").val(data.dataArray.content1);
+        $("#defaultcontent1").val(data.dataArray.defaultContent1);
+        $("#ampSnippet").html(JSON.stringify(data.ampSnippet, null, 2));
+    }
+    console.log(JSON.stringify(data.dataArray, null, 2));
+});
+
+
+function saveContent(name, value) {
+
+    var ampSnippet = "";
+
+    sdk.getData(function (data) {
+        
+        console.log("Inside SaveText - Data: "+JSON.stringify(data, null, 2));
+
+        function updateObject(keyVal, valVal){
+            var numberOfEdits = data.numberOfEdits || 0;
+            if(!data.dataArray){
+                console.log("Causing trouble!");
+            }else{
+                data.dataArray[name] = value;
+                console.log("Adding new values: "+JSON.stringify(data, null, 2));
+            } 
+
+            console.log("Type Value: "+JSON.stringify(data.dataArray.type, null, 2));
+
+            var summaryDEName = 'ent.Survey_Results_Summary__c_Salesforce';
+            var avalSubscriptionDEName = 'ent.Available_Subscription__c_Salesforce';
+            var interestDEName = 'ent.Interest__c_Salesforce';
+
+            if(data.dataArray.type == 'Summary'){
+                ampSnippet = "%%[Set @PreferenceQuestionId = '"+data.dataArray.relevantId+"' Set @InterestId = '' Set @Id = AttributeValue('Id') Set @summary_rows = LookupOrderedRows('"+summaryDEName+"', 1, 'Id Desc', 'WhoId__c', @Id, 'Preference_Question__c', @PreferenceQuestionId) IF RowCount(@summary_rows) == 0 THEN Set @summary_message = 'There is no matching record.' ELSE IF RowCount(@summary_rows) != 0 THEN Set @summary_message = 'Record was found' Set @summary_row = row(@summary_rows,1) Set @QuestionId = FIELD(@summary_row,'Preference_Question__c') Set @AnswerValue = FIELD(@summary_row,'Answer__c') ELSE Set @summary_message = 'There is no matching record.' ENDIF ENDIF]%% %%[IF @AnswerValue == '"+data.dataArray.condition1+"' THEN Outputline(ContentBlockbyId('"+data.dataArray.content1+"')) ELSE Outputline(ContentBlockbyId('"+data.dataArray.defaultContent1+"')) ENDIF]%%";
+            }else{
+                ampSnippet = "%%[Set @InterestId = '"+data.dataArray.relevantId+"' Set @Id = AttributeValue('Id')  set @rows = LookupOrderedRows('"+interestDEName+"', 1, 'Id Desc', 'WhoId__c', @Id, 'Interest_Selection__c', @InterestId) IF RowCount(@rows) == 0 THEN Set @message = 'There is no matching record.' ELSE IF RowCount(@rows) != 0 THEN Set @message = 'Record was found' set @row = row(@rows,1) set @recordId = FIELD(@row,'Id') // Get Interest Value set @rowsDetail = LookupOrderedRows('"+avalSubscriptionDEName+"', 1, 'Id Desc', 'Id', @recordId) IF RowCount(@rowsDetail) == 0 THEN Set @message = 'There is no matching record.' ELSE IF RowCount(@rowsDetail) != 0 THEN Set @message = 'Record was found' set @rowDetail = row(@rowsDetail,1) set @Text = FIELD(@row,'Display_Text__c') ELSE Set @message = 'There is no matching record.' ENDIF ENDIF ELSE Set @message = 'There is no matching record.' ENDIF ENDIF  ]%% %%[ IF @Text == '"+data.dataArray.condition1+"' THEN Outputline(ContentBlockbyId('"+data.dataArray.content1+"')) ELSE Outputline(ContentBlockbyId('"+data.dataArray.defaultContent1+"')) ENDIF]%%";
+            }
+
+            sdk.setData({
+                numberOfEdits: numberOfEdits + 1,
+                dataArray: data.dataArray,
+                ampSnippet: ampSnippet
+            });
+
+            $('#dataObject').html(JSON.stringify(data.dataArray, null, 2));
+            $("#ampSnippet").html(JSON.stringify(data.ampSnippet, null, 2));
+
+            console.log("Ampscript: "+JSON.stringify(data.ampscript, null, 2));
+            console.log("Inside updateObject: "+JSON.stringify(data, null, 2));
+        }
+        updateObject(name, value);
+
+        
+        console.log("After saveText setData: "+JSON.stringify(data.dataArray, null, 2));
+
+        $( "#currentResoonse" ).html(JSON.stringify(data, null, 2));
+
+        var validate = validateForm();
+        if(validate != false){
+            console.log('Validate: '+validate);
+            sdk.getContent(function (content) {
+                console.log("Inside SaveContent: "+JSON.stringify(content, null, 2));
+                
+                //var imageHTML = '<img src="'+imgUrl+'" style="width:150px;display:block;margin: 0 auto;"/>';
+                console.log("Ampscript: "+ampSnippet);
+
+                content = ampSnippet;
+                sdk.setContent(content, function (setContent) {
+                    console.log("setContent: "+JSON.stringify(setContent, null, 2));
+                });
+                
+            });
+            var superContent = "<p><b>Dynamic Content Type: Summary</b></p><p>Preview dynamic content by clicking next.</p>";
+            console.log("SuperContent HTML: "+JSON.stringify(data.dataArray.defaultContentHTML, null, 2));
+            sdk.setSuperContent(data.dataArray.defaultContentHTML, function (setSuperContent){
+                console.log("SuperContent: "+JSON.stringify(setSuperContent, null, 2));
+            });
+        }else{
+            console.log('Validate: '+validate);
+        }
+    });
+
+}
+
+function validateForm() {
+  var isValid = true;
+  $(':required').each(function() {
+    if ( $(this).val() === '' )
+        isValid = false;
+  });
+  return isValid;
+}
+
+$('#type, #relevantId, #condition1, #content1, #defaultContent1').change(function(){
+    //$('#showImage').html('<img src="'+$(this).val()+'" style="width:150px;"/>');
+    saveContent($(this).attr("name"), $(this).val());
+});
+
+$('#defaultContent1').change(function(){
+    var asset = getAsset($(this).val());
+    console.log(JSON.stringify(asset, null, 2));
+    //saveContent('defaultContentHTML', asset);
+});
+
+</script>
+</body>
+</html>
