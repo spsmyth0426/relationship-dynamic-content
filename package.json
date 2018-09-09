@@ -20,6 +20,7 @@
     "fuel-rest": "^3.0.3",
     "http": "0.0.0",
     "https": "^1.0.0",
+    "mongodb": "^3.1.4",
     "mysportsfeeds-node": "^1.0.0",
     "path": "^0.12.7",
     "pg": "^7.4.3",
