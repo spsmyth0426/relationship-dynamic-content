@@ -8,7 +8,7 @@ var http        = require('http');
 var path        = require('path');
 var request     = require('request');
 var routes      = require('./routes');
-var mongodb = require("mongodb");
+//var mongodb = require("mongodb");
 
 var CONTACTS_COLLECTION = "instances";
 
@@ -28,7 +28,7 @@ if ('development' == app.get('env')) {
 
 // Connect to the database before starting the application server.
 var db;
-mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
+/* mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
   if (err) {
     console.log(err);
     process.exit(1);
@@ -43,7 +43,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
     var port = server.address().port;
     console.log("App now running on port", port);
   });
-});
+}); */
 
 // Generic error handler used by all endpoints.
 function handleError(res, reason, message, code) {
