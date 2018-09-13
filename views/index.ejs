@@ -48,7 +48,6 @@
 <div class="loaderContainer hide" id="dynamicContainer" style="width:100%;height:100%;z-index:9;position: absolute;background-color:gray;opacity: .5;">
     <div id="dynamicLoader" class="loader" style="position:absolute;top:50%;left:45%;z-index:10;"></div>   
 </div> 
-<div id="settings" class="settings" style="position:absolute;top:10px;right:10px;z-index:10;"><a href="" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-cogs"></i></a></div>    
 <form id="dynamicForm" style="padding: 20px;margin: 0;">    
 <div id="step1" class="step">
         <p>Description: This block is used to build dynamic content to related data extensions that the normal dynamic content block does not allow.</p>
@@ -69,7 +68,7 @@
             </div>
 
             <br><p>Select the Summary / Question / Interest Id</p>
-            <section class="slds-popover slds-nubbin_left" role="dialog" aria-label="Dialog Title" aria-describedby="dialog-body-id-13">
+            <!-- <section class="slds-popover slds-nubbin_left" role="dialog" aria-label="Dialog Title" aria-describedby="dialog-body-id-13">
                 <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close slds-button_icon" title="Close dialog">
                     <svg class="slds-button__icon" aria-hidden="true">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close" />
@@ -79,7 +78,7 @@
                 <div class="slds-popover__body" id="dialog-body-id-13">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
-            </section>
+            </section> -->
             <div class="slds-form-element">
                 <label class="slds-form-element__label" for="relevantId">Relevant Id (Ex: If you are using the summary object you would want to put in the questionId. If using the interest object you would use the Id of the Preference Subscription / Interest record you want to check for.)</label>
                 <div class="slds-form-element__control">
@@ -125,25 +124,6 @@
         </div>
 </div>
 </form>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Configuration</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        ...
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-    </div>
-    </div>
-</div>
-</div>
 <script type="text/javascript"> 
 
 function getAsset(assetId){
